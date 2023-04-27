@@ -13,6 +13,12 @@ import { AvatarDropdown, AvatarName } from '@/components';
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
 
+async function getSettings(): Promise<Partial<LayoutSettings>> {
+  return {
+    ...defaultSettings,
+    title: '张三李四王麻子',
+  } as Partial<LayoutSettings>;
+}
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */
@@ -40,17 +46,19 @@ export async function getInitialState(): Promise<{
     return {
       fetchUserInfo,
       currentUser,
-      settings: defaultSettings as Partial<LayoutSettings>,
+      settings: await getSettings(),
     };
   }
   return {
     fetchUserInfo,
-    settings: defaultSettings as Partial<LayoutSettings>,
+    settings: await getSettings(),
   };
 }
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
+  //控制台筛选 initialState 测试复现，在最后一次输出中，initialState.settings.title  没了
+  console.log('initialState: ', initialState);
   return {
     actionsRender: () => [<Question key="doc" />, <SelectLang key="SelectLang" />],
     avatarProps: {
